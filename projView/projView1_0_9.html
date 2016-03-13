@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<meta name="author" content="Chris Reudenbach" />
+
+<meta name="date" content="2016-03-10" />
+
+<title>Projected data in mapview</title>
+
+<script src="projView1_0_9_files/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="projView1_0_9_files/bootstrap-3.3.5/css/bootstrap.min.css" rel="stylesheet" />
+<script src="projView1_0_9_files/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="projView1_0_9_files/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="projView1_0_9_files/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="projView1_0_9_files/htmlwidgets-0.6/htmlwidgets.js"></script>
+<link href="projView1_0_9_files/leaflet-0.7.3/leaflet.css" rel="stylesheet" />
+<link href="projView1_0_9_files/leaflet-0.7.3/leafletfix.css" rel="stylesheet" />
+<link href="projView1_0_9_files/leaflet-0.7.3/leaflet.label.css" rel="stylesheet" />
+<link href="projView1_0_9_files/leaflet-0.7.3/gh-fork-ribbon.css" rel="stylesheet" />
+<link href="projView1_0_9_files/leaflet-0.7.3/gh-fork-ribbon.ie.css" rel="stylesheet" />
+<script src="projView1_0_9_files/leaflet-0.7.3/leaflet.js"></script>
+<script src="projView1_0_9_files/leaflet-0.7.3/leaflet.label.js"></script>
+<script src="projView1_0_9_files/leaflet-0.7.3/leaflet.ajax.js"></script>
+<script src="projView1_0_9_files/leaflet-0.7.3/leaflet-providers.js"></script>
+<script src="projView1_0_9_files/leaflet-0.7.3/geojson-vt-dev.js"></script>
+<script src="projView1_0_9_files/leaflet-0.7.3/L.CanvasTiles.js"></script>
+<script src="projView1_0_9_files/leaflet-0.7.3/rtree.min.js"></script>
+<script src="projView1_0_9_files/tiles-0.0.1/rastercoords.js"></script>
+<script src="projView1_0_9_files/proj4leafet-0.7.2/proj4-compressed.js"></script>
+<script src="projView1_0_9_files/proj4leafet-0.7.2/proj4.js"></script>
+<script src="projView1_0_9_files/proj4leafet-0.7.2/proj4leaflet.js"></script>
+<script src="projView1_0_9_files/glify-0.0.1/leaflet.glify.js"></script>
+<script src="projView1_0_9_files/glify-0.0.1/leaflet.canvasoverlay.js"></script>
+<script src="projView1_0_9_files/glify-0.0.1/gl.js"></script>
+<link id="fragment-shader-fragment-shader-attachment" rel="attachment" href="projView1_0_9_files/fragment-shader-0.1.0/fragment-shader.glsl"/>
+<link id="vertex-shader-vertex-shader-attachment" rel="attachment" href="projView1_0_9_files/vertex-shader-0.1.0/vertex-shader.glsl"/>
+<script src="projView1_0_9_files/projView-binding-1.0.9/projView.js"></script>
+<script src="projView1_0_9_files/crs-1/crs.js"></script>
+<script src="projView1_0_9_files/jsondata-1/jsondata"></script>
+<script src="projView1_0_9_files/layers-1/layers.js"></script>
+
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; background-color: #f8f8f8; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+pre, code { background-color: #f8f8f8; }
+code > span.kw { color: #204a87; font-weight: bold; }
+code > span.dt { color: #204a87; }
+code > span.dv { color: #0000cf; }
+code > span.bn { color: #0000cf; }
+code > span.fl { color: #0000cf; }
+code > span.ch { color: #4e9a06; }
+code > span.st { color: #4e9a06; }
+code > span.co { color: #8f5902; font-style: italic; }
+code > span.ot { color: #8f5902; }
+code > span.al { color: #ef2929; }
+code > span.fu { color: #000000; }
+code > span.er { font-weight: bold; }
+</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+
+
+
+</head>
+
+<body>
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+  height: auto;
+}
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+</style>
+
+
+<div class="container-fluid main-container">
+
+<!-- tabsets -->
+<script src="projView1_0_9_files/navigation-1.0/tabsets.js"></script>
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+</script>
+
+<!-- code folding -->
+
+
+
+
+
+
+<div class="fluid-row" id="header">
+
+
+<h1 class="title">Projected data in mapview</h1>
+<h4 class="author"><em>Chris Reudenbach</em></h4>
+<h4 class="date"><em>March 10, 2016</em></h4>
+
+</div>
+
+<div id="TOC">
+<ul>
+<li><a href="#installation">Installation</a></li>
+<li><a href="#some-remarks-about-projected-slippy-maps">Some remarks about projected slippy maps</a></li>
+<li><a href="#use-case-epsg3031">Use case EPSG:3031</a></li>
+<li><a href="#the-short-way">The short way</a></li>
+<li><a href="#the-long-way">The long way</a><ul>
+<li><a href="#slippy-maps-where-do-they-come-from">Slippy maps where do they come from?</a></li>
+<li><a href="#hands-on-getting-the-information">Hands on getting the information</a><ul>
+<li><a href="#identify-the-data-provider">Identify the data provider</a></li>
+<li><a href="#check-which-data-is-available">Check which data is available</a></li>
+<li><a href="#extract-the-necessary-informations">Extract the necessary informations</a></li>
+<li><a href="#put-it-together">Put it together</a></li>
+<li><a href="#assess-the-parameters">Assess the parameters</a></li>
+</ul></li>
+</ul></li>
+<li><a href="#map.types-parameter-list-of-projview">map.types parameter list of projView</a><ul>
+<li><a href="#things-you-better-know">Things you better know</a><ul>
+<li><a href="#the-url-of-the-service">The URL of the service</a></li>
+<li><a href="#the-remaining-parameters-of-the-urlservice">The remaining Parameters of the URL/Service</a></li>
+<li><a href="#parameters-of-the-ruling-leaflet-map-object">Parameters of the ruling leaflet map object</a><ul>
+<li><a href="#initialresolution">$initialResolution</a></li>
+<li><a href="#bounds">$bounds</a></li>
+<li><a href="#origin">$origin</a></li>
+</ul></li>
+</ul></li>
+</ul></li>
+<li><a href="#some-examples">Some examples</a><ul>
+<li><a href="#earthdata-south-pole">EarthData South Pole</a></li>
+<li><a href="#arctic-web-maps-as-provided-by-arcticconnect-ac">Arctic Web Maps as provided by ArcticConnect (AC)</a></li>
+<li><a href="#the-conservation-of-arctic-fauna-and-flora-caff">The Conservation of Arctic Fauna and Flora (CAFF)</a></li>
+</ul></li>
+<li><a href="#final-remarks">Final remarks</a></li>
+</ul>
+</div>
+
+<p><img src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" /> (CC-BY-NC-SA)</p>
+<p>This document was produced on <em>So Mär 13 2016</em> using <code>mapview</code> version <strong>1.0.9</strong></p>
+<hr />
+<div id="installation" class="section level1">
+<h1>Installation</h1>
+<p>Currently you will find projView only in the development branch of mapview. If you want to use it the probably easiest way to install <code>mapview</code> is to use <code>library(&quot;devtools&quot;)</code>. With <code>devtools</code> installed and loaded type the following:</p>
+<p>For the development version:</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">install_github</span>(<span class="st">&quot;environmentalinformatics-marburg/mapview&quot;</span>, <span class="dt">ref =</span> <span class="st">&quot;develop&quot;</span>)</code></pre>
+<hr />
+</div>
+<div id="some-remarks-about-projected-slippy-maps" class="section level1">
+<h1>Some remarks about projected slippy maps</h1>
+<p>Why would you be interested to visualize projected data? The answer is two folded but simple. First there are areas of the earth which you cannot map with a pseudo-Mercator projection and second (at least for me) even more important the adequate or inadequate cartographic representation of spatial data has a deep impact on our visual reception and interpretation of this data. The straightforward conclusion is that there is a high need for projected mapping.</p>
+<p>Beyond all mapping philosophy let’s focus on a practical problem. We want to analyze and visualize some recent research data from the antartic continent using R and slippy maps. There is no possibility to use leaflet maps beyond the -85 degree latitude due to the implemented projections and we have to switch over to the great Open Source Geographic Information System <a href="http://www.qgis.org/" target="_blank">QGIS</a> or another mature GIS software package. With no doubt we may also use the well known static plotting packages of R - but no slippy maps for the penguins and polar bears within R.</p>
+<p>Leaflet is a fascinating JavaScript library which is not only lightweight and easy to use. but moreover fully extensible with plug-ins and own JS scripts. With respect to our needs the proj4leaflet extension of leaflet is dealing with projections. The R interface to JS-leaflet is provided by the leaflet package and in turn the mapview package provides a comfortable wrapper for the R leaflet package. It seems to be obvious that this chaining may lead to some restrictions and exactly this is the situation.</p>
+<p>ProjView uses its own interface directly to leaflet. To keep it in line with leaflet and mapview it is also using the htmlwidget package. the main advantage is that there is no need to live with the restrictions of the outlined chain but on the other hand you have to to it by your own means. Therefore projView is not neat less integrated and its usage and functionality is slightly different and restricted.</p>
+</div>
+<div id="use-case-epsg3031" class="section level1">
+<h1>Use case EPSG:3031</h1>
+<p>As we already have learned, the mapview penguin story ends at 85 degree of latitude. Using projView continuous the story. Unfortunately first we need to invest in the business - we have to gather some informations.</p>
+</div>
+<div id="the-short-way" class="section level1">
+<h1>The short way</h1>
+<p>You know what to do? Perfect. Search “NASA leaflet earthdata” and choose the appropriate <a href="https://wiki.earthdata.nasa.gov/display/GIBS/Map+Library+Usage" target="_blank">GIBS Map Library Usage</a> hit. Navigate to Leaflet and choose <a href="https://github.com/nasa-gibs/gibs-web-examples">GIS Web examples</a>. Find <a href="https://earthdata.nasa.gov/labs/gibs/examples/leaflet/antarctic-epsg3031.html">Antarctic (EPSG:3031)</a> and move down in this tutorial to <em>parameter format for use in preview</em>.</p>
+</div>
+<div id="the-long-way" class="section level1">
+<h1>The long way</h1>
+<div id="slippy-maps-where-do-they-come-from" class="section level2">
+<h2>Slippy maps where do they come from?</h2>
+<p>Basically for slippy maps you need on-line data from service providers. Best known are the WMS and OSM tiling services. All of some send you by request rasterized tiles of georeferenced maps, satellite images and so on. Usually you want to add your own vector or raster data overlay. Depending on the service and the client there are almost all possibilities out there. One of leaflets major pros is that it is easy and fast. The main reason is that it is a client side approach what means that your browser and your CPU has to do all the work because usually you are getting the data “as it is delivered”.</p>
+<p>To learn how to prepare on-line services for mapview/leaflet we have to dive into the world of web mapping services.You will find a brief and simple explanation of how web maps (web services for web maps) works at Mapbox in the article (<a href="https://www.mapbox.com/help/how-web-maps-work/" target="_blank"> How web maps works </a>). Unfortunately you have to forget the last conclusion.</p>
+<p>Basically we need to access from a high level client (mapview) data tiles to retrieve. So we have to to know (1) which products are available (2) which map projections are available (3) how many zoom levels per product are available and (4) which protocol to access the data is available.</p>
+<p>Due to the fact that without a service provider you hardly will find a service and data, it is obviously rational that you first take a look at this topic. For an introduction of the WMS related services you will find a perfect outline of what OGC services are around and what they mean in the <a href="http://docs.qgis.org/2.6/en/docs/user_manual/working_with_ogc/ogc_client_support.html">QGIS OGC Documentation</a>. Please note even if this documentations refers to GIS as a client all decribed concepts of the services are valid for all type of clients. For the OSM tiling concept you may have a look at the OSM Wiki topic called <a href="http://wiki.openstreetmap.org/wiki/Tiles">Tiles</a>. Both concepts differ pretty much even if you will get as a result - tiles.</p>
+<p>In theory, everything seems to be clear so far.</p>
+</div>
+<div id="hands-on-getting-the-information" class="section level2">
+<h2>Hands on getting the information</h2>
+<p>We have learned that it makes sense to start at a data provider and to find out what standards products on which projection and zoomlevel they provide.</p>
+<p>ProjView supports up to now WMTS related services.</p>
+<ol style="list-style-type: decimal">
+<li>Identify the data provider</li>
+<li>Check which data is available for WMTS</li>
+<li>Extract the necessary informations.</li>
+</ol>
+<div id="identify-the-data-provider" class="section level3">
+<h3>Identify the data provider</h3>
+<p>A big shot and always a good first try in data retrieval processing and providing in the earth science scene is the NASA Earth Observing System Data and Information System <a href="https://earthdata.nasa.gov/about" target="_blank">EOSDIS</a>. Don’t get confused. They provide an incredible amount of information and data but you have to know how to find it. It is a typical govermental structure. EOSDIS implements the Earth Science Data and Information System <a href="https://earthdata.nasa.gov/about/esdis-project" target="_blank"> ESDIS </a> for data providing. Within this EarthData portal you will find all types of interfaces and services. Best way to get <i>real</i> information is the usage of the <a href="https://wiki.earthdata.nasa.gov/display/ECE/Dashboard" target="_blank">EarthData-Wiki</a>.</p>
+<p>As we are interested in web served data we need providers of this data. Just to have an example we will have a look at the NASA Global Imagery Browse Services <a href="https://wiki.earthdata.nasa.gov/display/GIBS" target="_blank">GIBS</a>. Here you will find all kinds of data and informations you may interested in. The services implement functionality for automated anaysis of the provided Content. We will use the most common OGC Web Map Tile Service (WMTS). The EarthData-Wiki provides all information at <a href="https://wiki.earthdata.nasa.gov/display/GIBS/GIBS+API+for+Developers#GIBSAPIforDevelopers-OGCWebMapTileService(WMTS)" target="_blank">GIBS API for Developers</a> OGC Web Map Tile Service (WMTS).</p>
+</div>
+<div id="check-which-data-is-available" class="section level3">
+<h3>Check which data is available</h3>
+<p>As we are interested in the antarctic region we look for something like <em>Antarctic polar stereographic - EPSG:3031</em> . We choose the <a href="http://map1.vis.earthdata.nasa.gov/wmts-antarctic/1.0.0/WMTSCapabilities.xml">REST GetCapabilities</a> link and get an incredible XML output.</p>
+</div>
+<div id="extract-the-necessary-informations" class="section level3">
+<h3>Extract the necessary informations</h3>
+<p>You can read it now manually or write a script to extract the information you need.</p>
+</div>
+<div id="put-it-together" class="section level3">
+<h3>Put it together</h3>
+<p>projView is using the proj4leaflet <a href="http://kartena.github.io/Proj4Leaflet/api/">api</a>. For a basic setup of tiles we need at least the following arguments.</p>
+<ul>
+<li>service and service parameters</li>
+<li>internal service parameters usually url, format, tilesize, subdomains…</li>
+<li>leaflet map parameters, as correct bounding and upper left corner coordinates zoom levels, resolution …</li>
+<li>target projection (EPSG Code and proj4 string)</li>
+</ul>
+</div>
+<div id="assess-the-parameters" class="section level3">
+<h3>Assess the parameters</h3>
+<p>Let’s assume we are interested in the Blue Marble Shaded Relief Bathymetry. If we search for this layer in the <a href="http://map1.vis.earthdata.nasa.gov/wmts-antarctic/1.0.0/WMTSCapabilities.xml">REST GetCapabilities</a> XML file we will see something like:</p>
+<pre class="sourceCode xml"><code class="sourceCode xml"><span class="kw">&lt;Layer&gt;</span>
+<span class="kw">&lt;ows:Title&gt;</span>BlueMarble_ShadedRelief_Bathymetry<span class="kw">&lt;/ows:Title&gt;</span>
+<span class="kw">&lt;ows:LowerCorner&gt;</span>-180 -90<span class="kw">&lt;/ows:LowerCorner&gt;</span>
+<span class="kw">&lt;ows:UpperCorner&gt;</span>180 -38.941373<span class="kw">&lt;/ows:UpperCorner&gt;</span>
+<span class="kw">&lt;/ows:WGS84BoundingBox&gt;</span>
+<span class="kw">&lt;ows:BoundingBox</span><span class="ot"> crs=</span><span class="st">&quot;urn:ogc:def:crs:EPSG::3031&quot;</span><span class="kw">&gt;</span>
+<span class="kw">&lt;ows:LowerCorner&gt;</span>-4194304 -4194304<span class="kw">&lt;/ows:LowerCorner&gt;</span>
+<span class="kw">&lt;ows:UpperCorner&gt;</span>4194304 4194304<span class="kw">&lt;/ows:UpperCorner&gt;</span>
+<span class="kw">&lt;/ows:BoundingBox&gt;</span>
+<span class="kw">&lt;ows:Identifier&gt;</span>BlueMarble_ShadedRelief_Bathymetry<span class="kw">&lt;/ows:Identifier&gt;</span>
+<span class="kw">&lt;Style</span><span class="ot"> isDefault=</span><span class="st">&quot;true&quot;</span><span class="kw">&gt;</span>
+<span class="kw">&lt;ows:Title&gt;</span>default<span class="kw">&lt;/ows:Title&gt;</span>
+<span class="kw">&lt;ows:Identifier&gt;</span>default<span class="kw">&lt;/ows:Identifier&gt;</span>
+<span class="kw">&lt;/Style&gt;</span>
+<span class="kw">&lt;Format&gt;</span>image/jpeg<span class="kw">&lt;/Format&gt;</span>
+<span class="kw">&lt;TileMatrixSetLink&gt;</span>
+<span class="kw">&lt;TileMatrixSet&gt;</span>EPSG3031_500m<span class="kw">&lt;/TileMatrixSet&gt;</span>
+<span class="kw">&lt;/TileMatrixSetLink&gt;</span>
+<span class="kw">&lt;ResourceURL</span><span class="ot"> format=</span><span class="st">&quot;image/jpeg&quot;</span><span class="ot"> resourceType=</span><span class="st">&quot;tile&quot;</span><span class="ot"> template=</span><span class="st">&quot;http://map1.vis.earthdata.nasa.gov/wmts-antarctic/BlueMarble_ShadedRelief_Bathymetry/default/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.jpg&quot;</span><span class="kw">/&gt;</span>
+<span class="er">&lt;</span>/Layer&gt;</code></pre>
+<p>Admittedly annoying to read but it provides all necessary information in a compact way.</p>
+<p>First we have to analyze the primary arguments:</p>
+<ul>
+<li>ResourceURL</li>
+<li>format</li>
+<li>resourceType</li>
+<li>template</li>
+<li>BoundingBox</li>
+<li>LowerCorner</li>
+<li>UpperCorner</li>
+<li>Identifier</li>
+</ul>
+<p>If we focus <em>ResourceURL</em> we will find more information in the the argument <em>template</em>:</p>
+<p><em><a href="http://map1.vis.earthdata.nasa.gov/wmts-antarctic/BlueMarble_ShadedRelief_Bathymetry/default/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.jpg" class="uri">http://map1.vis.earthdata.nasa.gov/wmts-antarctic/BlueMarble_ShadedRelief_Bathymetry/default/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.jpg</a></em></p>
+<p>To construct a valid URL we also need the content of the following variables: * {TileMatrixSet} * {TileMatrix},{TileRow},{TileCol}</p>
+<p>There are still some parameters missing which are not documented in the xml file. We will find tileSize and zoomlevel information at the <a href="https://wiki.earthdata.nasa.gov/display/GIBS/GIBS+API+for+Developers#GIBSAPIforDevelopers-AntarcticPolarStereographic(EPSG:3031)">EPSG:3031 examples</a> table. Additionally it is common that the variable {TileMatrix},{TileRow},{TileCol} are corresponding to the subdomains of the WMTS Rest format (i.e. “abc”).</p>
+<p>Ready to compile the information.</p>
+</div>
+</div>
+</div>
+<div id="map.types-parameter-list-of-projview" class="section level1">
+<h1>map.types parameter list of projView</h1>
+<p>Now we need an appropriate structure for these parameters to make it less complicated to feed the projView function with this information. This is a simple nested list. If we fill it with the values it looks like this:</p>
+<pre class="sourceCode r"><code class="sourceCode r">NASA=<span class="kw">list</span>(<span class="dt">service=</span><span class="st">&quot;OSM&quot;</span>,                                             <span class="co"># name of the list</span>
+<span class="dt">L.tileLayer=</span><span class="st">&quot;https://map1{s}.vis.earthdata.nasa.gov/wmts-antarctic/&quot;</span>, <span class="co"># base address &lt;ResourceURL&gt;</span>
+<span class="co"># layer list is structured like the path of the url in this case: &lt;ows:Identifier&gt;,&lt;TileMatrixSet&gt;</span>
+          <span class="dt">layer=</span><span class="kw">list</span>( <span class="st">&quot;BlueMarble_ShadedRelief_Bathymetry&quot;</span>   =<span class="st"> </span><span class="kw">list</span>(<span class="st">&quot;BlueMarble_ShadedRelief_Bathymetry&quot;</span>,<span class="st">&quot;default&quot;</span>,<span class="st">&quot;EPSG3031_500m&quot;</span>,<span class="st">&quot;{z}/{y}/{x}&quot;</span>),
+                      <span class="st">&quot;AMSR2_Sea_Ice_Brightness_Temp_6km_89H&quot;</span>=<span class="st"> </span><span class="kw">list</span>(<span class="st">&quot;AMSR2_Sea_Ice_Brightness_Temp_6km_89H&quot;</span>,<span class="st">&quot;default&quot;</span>,<span class="st">&quot;2014-02-04&quot;</span>,<span class="st">&quot;EPSG3031_1km&quot;</span>,<span class="st">&quot;{z}/{y}/{x}&quot;</span>),
+                      <span class="st">&quot;MODIS_Terra_Snow_Cover&quot;</span>               =<span class="st"> </span><span class="kw">list</span>(<span class="st">&quot;MODIS_Terra_Snow_Cover&quot;</span>,<span class="st">&quot;default&quot;</span>,<span class="st">&quot;2014-02-04&quot;</span>,<span class="st">&quot;EPSG3031_1km&quot;</span>,<span class="st">&quot;{z}/{y}/{x}&quot;</span>)
+          ),      <span class="co"># end of layer list</span>
+ 
+<span class="dt">format=</span><span class="st">&quot;image/jpg&quot;</span>,<span class="co">#&lt;Format&gt;</span>
+<span class="dt">tileSize=</span><span class="st">&quot;512&quot;</span>,   <span class="co"># min resolution  EPSG:3031 examples</span>
+<span class="dt">subdomains=</span><span class="st">&quot;abc&quot;</span>, <span class="co"># most often used -&gt; can be assumed as default </span>
+<span class="dt">noWrap =</span><span class="st">&quot;true&quot;</span>,   <span class="co"># most often used -&gt; can be assumed as default </span>
+<span class="co"># attribution has to meet the data providers needs and your personal interpretation of transparence </span>
+<span class="dt">attribution=</span><span class="st">&quot;&lt;a href=&#39;https://wiki.earthdata.nasa.gov/display/GIBS&#39;&gt; NASA EOSDIS GIBS&lt;/a&gt; &amp;nbsp;|| &amp;nbsp; &lt;a href=&#39;https://github.com/kartena/Proj4Leaflet&#39;&gt; Proj4Leaflet&lt;/a&gt; | Projection: &lt;a href=&#39;http://spatialreference.org/ref/epsg/wgs-84-antarctic-polar-stereographic/&#39;&gt; EPSG3031&lt;/a&gt;&quot;</span>,
+<span class="dt">params=</span><span class="kw">list</span>(<span class="dt">t_epsg=</span><span class="st">&quot;EPSG:3031&quot;</span>, <span class="co"># exactly this the EPSG Code beside all other possibilieties and standards if possible keep it like this</span>
+<span class="dt">t_srs=</span><span class="st">&quot;+proj=stere +lat_0=-90 +lat_ts=-71 +lon_0=0 +k=1 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs&quot;</span>, <span class="co"># corresponding proj4 strings best be taken from href=&#39;http://spatialreference.org</span>
+<span class="dt">mapCenter=</span><span class="kw">list</span>(<span class="dt">cLat=</span><span class="st">&quot;-90&quot;</span>,  <span class="co">#see example map EPSG:3031 examples</span>
+<span class="dt">cLon=</span><span class="st">&quot;0&quot;</span>),                  <span class="co">#see example map EPSG:3031 examples</span>
+<span class="dt">initialZoom=</span><span class="st">&quot;1&quot;</span>,            <span class="co">#EPSG:3031 examples: Please note that the &quot;top tile&quot; (i.e., zoom level 0) is not currently supported by GIBS.</span>
+<span class="dt">zoomLevels=</span><span class="st">&quot;5&quot;</span>,             <span class="co"># zoom/levels EPSG:3031 examples</span>
+<span class="dt">initialResolution=</span><span class="st">&quot;256&quot;</span>,           <span class="co"># = minresolution EPSG:3031 examples</span>
+<span class="dt">ovlBounds=</span><span class="kw">list</span>(<span class="dt">minx=</span><span class="st">&quot;-4194304&quot;</span>, ## &lt;ows:LowerCorner&gt;
+<span class="dt">miny=</span><span class="st">&quot;-4194304&quot;</span>,                ## &lt;ows:LowerCorner&gt;
+<span class="dt">maxx=</span><span class="st">&quot;4194304&quot;</span>,                 ## &lt;ows:UpperCorner&gt;
+<span class="dt">maxy=</span><span class="st">&quot;4194304&quot;</span>),                ## &lt;ows:UpperCorner&gt;
+<span class="dt">origin=</span><span class="kw">list</span>(<span class="dt">olx=</span><span class="st">&quot;-4194304&quot;</span>,    ## &lt;ows:LowerCorner&gt; firstvalue minx
+<span class="dt">oly=</span><span class="st">&quot;4194304&quot;</span>),                ## &lt;ows:UpperCorner&gt; lastvalue maxy
+<span class="dt">relUrl=</span><span class="st">&quot;&quot;</span>                      ## obsolete used for local tiles
+))</code></pre>
+<div id="things-you-better-know" class="section level2">
+<h2>Things you better know</h2>
+<p>You may imagine that serving of tiles is a world itself. Therefore it seems to be pretty ambitious to find a all in one solution. What I tried so far is to get a as simple as possible way to use WMS and OSM services. You should know some internal calculations and undocumented argument usage to prevent that you are going mad watching the weird behaviour of the tool.</p>
+<p>First a dump of the list to identfy the crucial arguments we have to talk about.</p>
+<pre><code>List of 11
+ $ service    : chr &quot;OSM&quot;
+ $ L.tileLayer: chr &quot;https://map1{s}.vis.earthdata.nasa.gov/wmts-antarctic/&quot;
+ $ layer      :List of 3
+  ..$ BlueMarble_ShadedRelief_Bathymetry   :List of 4
+  .. ..$ : chr &quot;BlueMarble_ShadedRelief_Bathymetry&quot;
+  .. ..$ : chr &quot;default&quot;
+  .. ..$ : chr &quot;EPSG3031_500m&quot;
+  .. ..$ : chr &quot;{z}/{y}/{x}&quot;
+  ..$ AMSR2_Sea_Ice_Brightness_Temp_6km_89H:List of 5
+  .. ..$ : chr &quot;AMSR2_Sea_Ice_Brightness_Temp_6km_89H&quot;
+  .. ..$ : chr &quot;default&quot;
+  .. ..$ : chr &quot;2014-02-04&quot;
+  .. ..$ : chr &quot;EPSG3031_1km&quot;
+  .. ..$ : chr &quot;{z}/{y}/{x}&quot;
+  ..$ MODIS_Terra_Snow_Cover               :List of 5
+  .. ..$ : chr &quot;MODIS_Terra_Snow_Cover&quot;
+  .. ..$ : chr &quot;default&quot;
+  .. ..$ : chr &quot;2014-02-04&quot;
+  .. ..$ : chr &quot;EPSG3031_1km&quot;
+  .. ..$ : chr &quot;{z}/{y}/{x}&quot;
+ $ format     : chr &quot;image/jpg&quot;
+ $ tileSize   : chr &quot;512&quot;
+ $ subdomains : chr &quot;abc&quot;
+ $ minZoom    : num 0
+ $ maxZoom    : num 5
+ $ noWrap     : chr &quot;true&quot;
+ $ attribution: chr &quot;&lt;a href=&#39;https://wiki.ear __truncated__&#39;&quot;
+ $ params     :List of 9
+  ..$ t_epsg           : chr &quot;EPSG:3031&quot;
+  ..$ t_srs            : chr &quot;+proj=stere +lat_0=-90 +lat_ts=-71 +lon_0=0 +k=1 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs&quot;
+  ..$ mapCenter        :List of 2
+  .. ..$ cLat: chr &quot;-90&quot;
+  .. ..$ cLon: chr &quot;0&quot;
+  ..$ initialZoom      : chr &quot;0&quot;
+  ..$ zoomLevels       : chr &quot;5&quot;
+  ..$ initialResolution: chr &quot;256&quot;
+  ..$ ovlBounds        :List of 4
+  .. ..$ minx: chr &quot;-4194304&quot;
+  .. ..$ miny: chr &quot;-4194304&quot;
+  .. ..$ maxx: chr &quot;4194304&quot;
+  .. ..$ maxy: chr &quot;4194304&quot;
+  ..$ origin           :List of 2
+  .. ..$ olx: chr &quot;-4194304&quot;
+  .. ..$ oly: chr &quot;4194304&quot;
+  ..$ relUrl           : chr &quot;&quot;</code></pre>
+<div id="the-url-of-the-service" class="section level3">
+<h3>The URL of the service</h3>
+<p>The whole List will be iterated using the sublist <em><span class="math">\(layer* to build the URL, in the example case 3 times. The root of the url is always *\)</span>L.tileLayer</em>:</p>
+<p>Note the first item will be <strong>always</strong> the baselayer of the map and can not be switched on an off.</p>
+<p>Each layer item is then iterated over the path list. Note the items <strong>must</strong> be in the sequence of the path because they were pasted in exactly one after the other.</p>
+<p>As a result you should get the (correct) URL for the service.</p>
+</div>
+<div id="the-remaining-parameters-of-the-urlservice" class="section level3">
+<h3>The remaining Parameters of the URL/Service</h3>
+<p>All items except <em><span class="math">\(params* and *\)</span>layer</em> are parsed and used to set up a correct <em>L.tileLayer{}</em> parameter list. They can be crucial and it is possible that you have to play around a bit</p>
+</div>
+<div id="parameters-of-the-ruling-leaflet-map-object" class="section level3">
+<h3>Parameters of the ruling leaflet map object</h3>
+<p>All Parameters of the <em>$param</em> list belong to the leaflet map object respective the Proj4Leaflet extension for non leaflet CRSs.</p>
+<p>Most of them are as they are looking like. Especially <em><span class="math">\(initialResolution*, *\)</span>ovlBound</em> and <em>$origin</em>. These parameter set is ruling the leaflet map object setup and even if everything all other arguments are perfect, you will get strange or no effects, if they don’t meet the needs of the data providers.</p>
+<div id="initialresolution" class="section level4">
+<h4>$initialResolution</h4>
+<p>Usually it is tried to calculate the resolution automatically. the approach is simple:</p>
+<pre><code>        maxResolution &lt;- res / div
+        resolution&lt;- list()
+        for ( i in seq(0,maxZoom)){
+        resolution[i+1] &lt;- maxResolution /  2^i
+        }</code></pre>
+<p>where i is the increasing level of zoom up to maxZoom, res is the maximum extend of the the bounds of the maps, div is the tilSize scaled by the initialResolution. Ususally tileSize and initialResoulution should be the same than div=tileSize if not div&lt;-tileSize/initialRes*tileSize</p>
+<p>If you are not able to find a good range of resolution but you find an example then you may just paste it in initialResolution.</p>
+<pre><code>       initialResolution=c(8192,4096,2048, 1024, 512, 256, 128,64, 32, 16, 8, 4, 2,1,0.5,0.25,0.125,0.0625)</code></pre>
+<p>This will be taken as it is.</p>
+</div>
+<div id="bounds" class="section level4">
+<h4>$bounds</h4>
+<p>If you don’t need or have no idea about the bounds you may try to set at least one of the values to NULL</p>
+<pre><code>    minx=NULL
+    </code></pre>
+<p>with this option no bounds will be generated.</p>
+</div>
+<div id="origin" class="section level4">
+<h4>$origin</h4>
+<p>the origin has always to be set. Note you <strong>must</strong> use values of the target reference system. Especially in polar stereographic projections that are not centered on the pole this can be tricky.</p>
+<p>Time for some examples…</p>
+</div>
+</div>
+</div>
+</div>
+<div id="some-examples" class="section level1">
+<h1>Some examples</h1>
+<div id="earthdata-south-pole" class="section level2">
+<h2>EarthData South Pole</h2>
+<p>First lets map the manually written input list from the tutorial. For convienience reason we load it from the package. We are obtaining the data from [NASA EarthData] (<a href="https://wiki.earthdata.nasa.gov/display/ECE/Dashboard" class="uri">https://wiki.earthdata.nasa.gov/display/ECE/Dashboard</a>&quot; target=“_blank“&gt;EarthData-Wiki). The used camps are documented in the package.</p>
+<p><div id="htmlwidget-7578" style="width:909.12px;height:480px;" class="projView html-widget"></div>
+<script type="application/json" data-for="htmlwidget-7578">{"x":{"data":"undefined","layername":"x","overlayLayer":"x","zoom":"0","t_epsg":"EPSG:3031","t_srs":"+proj=stere +lat_0=-90 +lat_ts=-71 +lon_0=0 +k=1 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs","tilesize":512,"color":["#EBEAF7","#E7E8F5","#E4E6F4","#E0E4F3","#DDE2F2","#D9E0F1","#D6DEF0","#D2DCEF","#CFDAEE","#CBD8ED","#C8D6EC","#C4D4EA","#C1D2E9","#BDD1E8","#BACFE7","#B6CDE6","#B3CBE5","#AFC9E4","#ACC7E3","#A8C5E2","#A5C3E1","#A1C1DF","#9EBFDE","#9ABDDD","#97BBDC","#93B9DB","#91B8DA","#90B8D9","#8FB8D8","#8FB8D7","#8EB8D6","#8DB8D6","#8CB8D5","#8BB8D4","#8BB8D3","#8AB8D2","#89B8D1","#88B8D0","#87B8CF","#86B7CE","#86B7CD","#85B7CD","#84B7CC","#83B7CB","#82B7CA","#81B7C9","#81B7C8","#80B7C7","#7FB7C6","#7EB7C5","#7DB7C4","#7DB7C4","#7DB7C2","#7DB7C1","#7DB7C0","#7DB7BF","#7DB7BE","#7DB7BD","#7DB8BC","#7DB8BB","#7DB8BA","#7DB8B9","#7DB8B8","#7DB8B7","#7DB9B6","#7DB9B5","#7DB9B4","#7DB9B3","#7DB9B2","#7DB9B1","#7DB9B0","#7DBAAF","#7DBAAE","#7DBAAD","#7DBAAC","#7DBAAB","#7DBAAA","#7DBAA8","#7DBAA6","#7DBAA4","#7DBAA2","#7DBAA0","#7DBA9D","#7DBA9B","#7DBA99","#7DBA97","#7DBA95","#7DBA92","#7DBA90","#7DBA8E","#7EB98C","#7EB98A","#7EB987","#7EB985","#7EB983","#7EB981","#7EB97F","#7EB97C","#7EB97A","#7EB978","#7EB976","#7EB974","#7FB972","#80B870","#82B86E","#84B86C","#85B86A","#87B768","#89B766","#8BB764","#8CB762","#8EB661","#90B65F","#91B65D","#93B65B","#95B559","#97B557","#98B555","#9AB553","#9CB452","#9EB450","#9FB44E","#A1B44C","#A3B44A","#A4B348","#A6B346","#A8B344","#AAB342","#ABB241","#ADB240","#AFB13F","#B0B13E","#B2B03E","#B4B03D","#B5AF3C","#B7AF3B","#B9AE3A","#BBAE39","#BCAD38","#BEAD38","#C0AC37","#C1AC36","#C3AB35","#C5AB34","#C6AA33","#C8AA32","#CAA932","#CBA931","#CDA830","#CFA82F","#D0A72E","#D2A72D","#D4A62C","#D5A62C","#D6A52C","#D7A42C","#D7A32C","#D8A22D","#D9A12D","#D9A02D","#DA9F2E","#DB9E2E","#DB9D2E","#DC9C2F","#DC9B2F","#DD9A2F","#DE9930","#DE9830","#DF9730","#E09631","#E09631","#E19531","#E19431","#E29332","#E39232","#E39132","#E49033","#E58F33","#E58E33","#E68D33","#E68B33","#E68933","#E68832","#E68632","#E68432","#E68331","#E68131","#E68031","#E67E31","#E67C30","#E67B30","#E67930","#E6772F","#E6762F","#E6742F","#E6722E","#E6712E","#E66F2E","#E66D2D","#E66C2D","#E66A2D","#E6682C","#E6672C","#E6652C","#E6642C","#E5612B","#E45E2B","#E45C2A","#E3592A","#E35629","#E25429","#E25128","#E14E28","#E14C27","#E04927","#E04726","#DF4426","#DF4125","#DE3F25","#DE3C24","#DD3924","#DD3724","#DC3423","#DC3223","#DB2F22","#DB2C22","#DA2A21","#DA2721","#D92420","#D92220","#D6201F","#D01F1E","#CA1D1C","#C41C1B","#BF1B1A","#B91919","#B31817","#AD1716","#A81615","#A21414","#9C1312","#961211","#901010","#8B0F0F","#850E0D","#7F0C0C","#790B0B","#740A0A","#6E0908","#680707","#620606","#5D0505","#570303","#510202","#4B0101","#460000"],"html":"<html> <head> <style> #popup {font-family: Arial, Helvetica, sans-serif;width: 20%;border-collapse: collapse;} #popup td {font-size: 1em;border: 0px solid #85ADFF;padding: 3px 20px 3px 3px;} #popup tr.alt td {color: #000000;background-color: #F0F5FF;} #popup tr.coord td {color: #000000;background-color: #A8E6A8;} div.scrollableContainer {max-height: 200px;max-width: 100%;overflow-y: auto;overflow-x: auto;margin: 0px;background: #D1E0FF;} \u003c/style> \u003c/head> <body> <div class='scrollableContainer'> <table class='popup scrollable'> <table id='popup'>","opacity":0.7,"weight":1,"values":{"hmn00nat":["Chile","Chile","Chile","Chile","France","Italy","United Kingdom","Chile","Chile","Chile","Japan","United Kingdom","United Kingdom","Chile","Ecuador","Australia","Australia","France","France","Italy","Italy","Russia","Russia","USA","USA","Italy","Bulgaria","Argentina","Norway","Norway","United States","United States","United Kingdom","United Kingdom","United Kingdom","Chile and United States","Chile","Italy","Spain","United States","Argentina","USA","United Kingdom","United Kingdom"],"hmn00nam":["Federico Puga (ex Punta Spring or G. Mann)","Rodolfo Marsh","Ram<f3>n Ca<f1>as (or Jorge Boonen)","Bah<ed>a Yankee","Prud'homme","Browning Pass","Fossil Bluff","Antonio Huneeus","Abrazo de Maip<fa>","Collins","S17","Rothera Skiway","Sky Blu","Federico Guesalaga","Refugio Ecuador","Wilkins Runway","Edgeworth-David","D10 skiway","D85 skiway","Mid Point","Sitry Point","Molodezhnaya Airfield","Novolazarevskaya Airfield","Odell Glacier","Siple Dome","Enigma Lake","Camp Academia, Livingston Island","C<e1>mara Base, Half Moon Island, Livingston Island","Borchgrevink's Hut, Cape Adare","Polheim, South Pole","Lower Erebus Hut, Ross Island","Patriot Hills, Ellsworth Mountains","Cape Royds, Ross Island","Discovery Hut, Hut Point Peninsula, Ross Island","Scott's Hut, Ross Island","Shirreff Base, Livingston Island","11 de septiembre","Edmonson Point","Camp Byers, Livingston Island","Union Glacier Camp, Ellsworth Mountains","Camp Livingston, Livingston Island","Marble Point Heliport","South Ice, Edith Ronne Land","Station P, Livingston Island"],"hmn00unl":[null,"AQ-TNM",null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null],"hmn00ltd":["64<b0>17.80'S","62<b0>11.37'S","63<b0>32.263'S","62<b0>32'S","66<b0>41.22'S","74<b0>37.37'S","71<b0>19.76'S","80<b0>08'S","63<b0>23.278'S","62<b0>09.667'S","69<b0>01.58'S","67<b0>32'S","74<b0>51.38'S","67<b0>46.50'S","62<b0>08'S","66<b0>41.45'S","66<b0>15'S","66<b0>40.08'S","70<b0>25.50'S","75<b0>32.44'S","71<b0>39.32'S","67<b0>40.97'S","70<b0>49.52'S","76<b0>39'S","81<b0>39'S","74<b0>42.81'S","62<b0>38'41.9\"S","62<b0>35'41\"S","71<b0>18'S","90<b0>S","77<b0>30'37.6\"S","80<b0>19'0\"S","77<b0>33'S","77<b0>50'45\"S","77<b0>38'0\"S","62<b0>28'13.5\"S","63<b0>36.318'W","74<b0>20'S","62<b0>39'46\"S","82<b0>51'0\"S","62<b0>39'22\"S","77<b0>24.82'S","82<b0>05'S","62<b0>38'57.5\"S"],"hmn00lat":[-64.2967,-62.1895,-63.5377,-62.5333,-66.687,-74.6228,-71.3293,-80.1333,-63.388,-62.1611,-69.0263,-67.5333,-74.8563,-67.775,-62.1333,-66.6908,-66.25,-66.668,-70.425,-75.5407,-71.6553,-67.6828,-70.8253,-76.65,-81.65,-74.7135,-62.645,-62.5947,-71.3,-90,-77.5104,-80.3167,-77.55,-77.8458,-77.6333,-62.4704,-63.6053,-74.3333,-62.6628,-82.85,-62.6561,-77.4137,-82.0833,-62.6493],"hmn00lnd":["61<b0>04'W","58<b0>58.87'W","57<b0>24.257'W","59<b0>47'W","139<b0>54.42'E","163<b0>54.82'E","68<b0>16.02'W","81<b0>16'W","57<b0>34.96'W","58<b0>50.967'W","40<b0>04.37'E","68<b0>11'W","71<b0>34.16'W","68<b0>54'W","58<b0>22'W","111<b0>31.73'E","100<b0>36'E","139<b0>49.18'E","134<b0>08.75'E","145<b0>49.12'E","148<b0>39.15'E","46<b0>08.08'E","11<b0>37.68'E","159<b0>58'E","149<b0>04'W","164<b0>02.49'E","60<b0>10'18.3\"W","59<b0>55'8\"W","170<b0>12'E","0<b0>E","167<b0>8'45.83\"E","81<b0>16'0\"W","166<b0>10'E","166<b0>38'31.6\"W","166<b0>24'0\"E","60<b0>46'15\"W","57<b0>35.528'W","165<b0>07'E","61<b0>6'0\"W","79<b0>45'0\"W","61<b0>0'39\"W","163<b0>40.75'E","30<b0>00'W","60<b0>35'25\"W"],"hmn00lon":[-61.0667,-58.9812,-57.4043,-59.7833,139.907,163.9137,-68.267,-81.2667,-57.5827,-58.8494,40.0728,-68.1833,-71.5693,-68.9,-58.3667,111.5288,100.6,139.8197,134.1458,145.8187,148.6525,46.1347,11.628,159.9667,-149.0667,164.0415,-60.1717,-59.9189,170.2,0,167.1461,-81.2667,166.1667,-166.6421,166.4,-60.7708,-57.5921,165.1167,-61.1,-79.75,-61.0108,163.6792,-30,-60.5903],"hmn00elv":[30,45,10,5,10,170,92,880,400,5,620,250,1372,50,10,740,15,100,2850,2520,1600,225,550,1600,null,170,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null],"hmn00sui":[null,"wheel",null,null,null,"ski","ski",null,null,null,"ski","ski","wheel",null,null,"ski and wheel",null,"ski","ski","ski","ski","wheel and ski","wheel and ski","wheel","ski","ski",null,null,null,null,null,null,null,null,null,null,null,"ski",null,null,null,null,null,null],"hmn00dat":[1972,1969,1997,1952,null,1997,1961,1997,2003,2006,2005,1975,null,1962,1990,null,null,null,null,1998,2000,null,null,null,null,2005,2004,1953,1899,1911,1992,1987,1908,1911,1911,1991,2002,1994,null,2010,null,null,1957,1957],"feature_ty":["Refuge","Camp","Refuge","Refuge","Camp","Refuge","Refuge","Camp","Refuge","Refuge","Camp","Camp","Camp","Refuge","Refuge","Camp","Camp","Camp","Camp","Depot","Depot","Camp","Camp","Camp","Camp","Depot","Camp","Camp","Camp","Camp","Camp","Camp","Camp","Camp","Camp","Camp","Refuge","Camp","Camp","Camp","Camp","Camp","Camp","Camp"],"temporal":["Seasonal","Year-round","Seasonal","Seasonal","Seasonal","Seasonal","Seasonal","Seasonal","Seasonal","Seasonal","Seasonal","Seasonal","Seasonal","Seasonal","Seasonal","Seasonal","Seasonal","Seasonal","Seasonal","Seasonal","Seasonal","Seasonal","Seasonal","Seasonal","Seasonal","Seasonal",null,null,null,null,null,null,null,null,null,null,"Seasonal","Seasonal",null,null,null,"Seasonal",null,null],"capacity":[4,15,10,null,25,2,6,4,8,3,null,null,6,null,4,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,5,null,null,null,null,null,null,null],"notes":[null,null,null,null,null,null,null,null,null,null,null,null,null,null,"Refugio Ecuador (full name \"Refugio Republic del Ecuador\") was previously known as \"Vicente\".",null,null,null,null,null,null,null,null,null,null,null,null,null,null,"Amundsen's South Pole expedition","Monitoring Mt. Erebus","Private camp with Blue ice runway","Nimrod Expedition","Discovery Expedition","Terra Nova Expedition",null,null,null,null,"Private camp with Blue ice runway",null,null,"IGY overwinter","Survey, geology, biology"],"status":["Operational","Operational","Operational","Operational","Operational","Operational","Operational","Operational","Operational","Operational","Operational","Operational","Operational","Operational","Operational","Operational","Operational","Operational","Operational","Operational","Operational","Operational","Operational","Operational","Operational","Operational","Seasonal","Seasonal","Abandoned, ASPA #159","Abandoned","Operational","Seasonal","Abandoned, ASPA #157","Abandoned, ASPA #158","Abandoned, ASPA #155","Seasonal","Operational","Operational","Seasonal","Seasonal","Seasonal","Operational","Abandoned","Abandoned"],"hmn00src":["https://www.comnap.aq/facilities","https://www.comnap.aq/facilities","https://www.comnap.aq/facilities","https://www.comnap.aq/facilities","https://www.comnap.aq/facilities","https://www.comnap.aq/facilities","https://www.comnap.aq/facilities","https://www.comnap.aq/facilities","https://www.comnap.aq/facilities","https://www.comnap.aq/facilities","https://www.comnap.aq/facilities","https://www.comnap.aq/facilities","https://www.comnap.aq/facilities","https://www.comnap.aq/facilities","https://www.comnap.aq/facilities","https://www.comnap.aq/facilities","https://www.comnap.aq/facilities","https://www.comnap.aq/facilities","https://www.comnap.aq/facilities","https://www.comnap.aq/facilities","https://www.comnap.aq/facilities","https://www.comnap.aq/facilities","https://www.comnap.aq/facilities","https://www.comnap.aq/facilities","https://www.comnap.aq/facilities","https://www.comnap.aq/facilities","http://en.wikipedia.org/wiki/List_of_Antarctic_Field_Camps","http://en.wikipedia.org/wiki/List_of_Antarctic_Field_Camps","http://en.wikipedia.org/wiki/List_of_Antarctic_Field_Camps","http://en.wikipedia.org/wiki/List_of_Antarctic_Field_Camps","http://en.wikipedia.org/wiki/List_of_Antarctic_Field_Camps","http://en.wikipedia.org/wiki/List_of_Antarctic_Field_Camps","http://en.wikipedia.org/wiki/List_of_Antarctic_Field_Camps","http://en.wikipedia.org/wiki/List_of_Antarctic_Field_Camps","http://en.wikipedia.org/wiki/List_of_Antarctic_Field_Camps","http://en.wikipedia.org/wiki/List_of_Antarctic_Field_Camps","https://www.comnap.aq/facilities","https://www.comnap.aq/facilities","http://en.wikipedia.org/wiki/List_of_Antarctic_Field_Camps","http://en.wikipedia.org/wiki/List_of_Antarctic_Field_Camps","http://en.wikipedia.org/wiki/List_of_Antarctic_Field_Camps","https://www.comnap.aq/facilities","http://en.wikipedia.org/wiki/List_of_Antarctic_Field_Camps","http://en.wikipedia.org/wiki/List_of_Antarctic_Field_Camps"],"hmn00rev":["2012-01-06","2012-01-06","2012-01-06","2012-01-06","2012-01-06","2012-01-06","2012-01-06","2012-01-06","2012-01-06","2012-01-06","2012-01-06","2012-01-06","2012-01-06","2012-01-06","2012-01-06","2012-01-06","2012-01-06","2012-01-06","2012-01-06","2012-01-06","2012-01-06","2012-01-06","2012-01-06","2012-01-06","2012-01-06","2012-01-06","2012-01-09","2012-01-09","2012-01-09","2012-01-09","2012-01-09","2012-01-09","2012-01-09","2012-01-09","2012-01-09","2012-01-09","2012-01-06","2012-01-06","2012-01-09","2012-01-09","2012-01-09","2012-01-06","2012-01-09","2012-01-09"],"hmn00edt":["darb1","darb1","darb1","darb1","darb1","darb1","darb1","darb1","darb1","darb1","darb1","darb1","darb1","darb1","darb1","darb1","darb1","darb1","darb1","darb1","darb1","darb1","darb1","darb1","darb1","darb1","darb1","darb1","darb1","darb1","darb1","darb1","darb1","darb1","darb1","darb1","darb1","darb1","darb1","darb1","darb1","darb1","darb1","darb1"],"hmn00typ":[24210,24211,24210,24210,24211,24210,24210,24211,24210,24210,24211,24211,24211,24210,24210,24211,24211,24211,24211,24212,24212,24211,24211,24211,24211,24212,24211,24211,24211,24211,24211,24211,24211,24211,24211,24211,24210,24211,24211,24211,24211,24211,24211,24211],"gid":[1,4,5,6,3,10,2,7,9,11,62,61,78,72,73,64,81,79,80,77,85,83,84,86,63,74,114,113,112,121,119,120,117,118,122,123,8,65,115,126,116,82,124,125],"ioc_ccode":["CHI","CHI","CHI","CHI","FRA","ITA","GBR","CHI","CHI","CHI","JPN","GBR","GBR","CHI","ECU","AUS","AUS","FRA","FRA","ITA","ITA","RUS","RUS","USA","USA","ITA","BUL","ARG","NOR","NOR","USA","USA","GBR","GBR","GBR","CHI","CHI","ITA","ESP","USA","ARG","USA","GBR","GBR"]},"cex":6,"internalList":false},"evals":[],"jsHooks":[]}</script></p>
+<p>In this special case of the antarctic NASA EarthData you may use the visEarthPole() function from the mapview package</p>
+<p><div id="htmlwidget-2009" style="width:909.12px;height:480px;" class="projView html-widget"></div>
+<script type="application/json" data-for="htmlwidget-2009">{"x":{"data":"undefined","attribution":"<a href='https://wiki.earthdata.nasa.gov/display/GIBS'> NASA EOSDIS GIBS\u003c/a> &nbsp;|| &nbsp; <a href='https://github.com/kartena/Proj4Leaflet'> Proj4Leaflet\u003c/a> | Projection: <a href='http://spatialreference.org/ref/epsg/wgs-84-antarctic-polar-stereographic/'> EPSG3031\u003c/a>","scale":[2048,1024,512,256],"ulc":[-4194304,4194304],"dateString":"2014-02-04","layer":["https://map1{s}.vis.earthdata.nasa.gov/wmts-antarctic/BlueMarble_ShadedRelief_Bathymetry/default/EPSG3031_500m/{z}/{y}/{x}.jpg","https://map1{s}.vis.earthdata.nasa.gov/wmts-antarctic/AMSR2_Sea_Ice_Concentration_25km/default/2016-01-13/EPSG3031_1km/{z}/{y}/{x}.png","https://map1{s}.vis.earthdata.nasa.gov/wmts-antarctic/AMSR2_Sea_Ice_Brightness_Temp_6km_89H/default/2016-01-13/EPSG3031_1km/{z}/{y}/{x}.png","https://map1{s}.vis.earthdata.nasa.gov/wmts-antarctic/AMSR2_Sea_Ice_Brightness_Temp_6km_89V/default/2016-01-13/EPSG3031_1km/{z}/{y}/{x}.png","https://map1{s}.vis.earthdata.nasa.gov/wmts-antarctic/AMSRE_Sea_Ice_Concentration_12km/default/2014-02-04/EPSG3031_1km/{z}/{y}/{x}.png","https://map1{s}.vis.earthdata.nasa.gov/wmts-antarctic/AMSRE_Snow_Depth_Over_Ice/default/2014-02-04/EPSG3031_1km/{z}/{y}/{x}.png","https://map1{s}.vis.earthdata.nasa.gov/wmts-antarctic/AMSRE_Sea_Ice_Concentration_25km/default/2014-02-04/EPSG3031_1km/{z}/{y}/{x}.png","https://map1{s}.vis.earthdata.nasa.gov/wmts-antarctic/AMSRE_Sea_Ice_Brightness_Temp_89H/default/2014-02-04/EPSG3031_1km/{z}/{y}/{x}.png","https://map1{s}.vis.earthdata.nasa.gov/wmts-antarctic/AMSRE_Sea_Ice_Brightness_Temp_89V/default/2014-02-04/EPSG3031_1km/{z}/{y}/{x}.png","https://map1{s}.vis.earthdata.nasa.gov/wmts-antarctic/AMSR2_Sea_Ice_Concentration_12km/default/2016-01-13/EPSG3031_1km/{z}/{y}/{x}.png","https://map1{s}.vis.earthdata.nasa.gov/wmts-antarctic/MODIS_Terra_Sea_Ice/default/2014-02-04/EPSG3031_1km/{z}/{y}/{x}.png","https://map1{s}.vis.earthdata.nasa.gov/wmts-antarctic/MODIS_Terra_Brightness_Temp_Band31_Day/default/2014-02-04/EPSG3031_1km/{z}/{y}/{x}.png","https://map1{s}.vis.earthdata.nasa.gov/wmts-antarctic/MODIS_Terra_Brightness_Temp_Band31_Night/default/2014-02-04/EPSG3031_1km/{z}/{y}/{x}.png","https://map1{s}.vis.earthdata.nasa.gov/wmts-antarctic/MODIS_Aqua_Sea_Ice/default/2014-02-04/EPSG3031_1km/{z}/{y}/{x}.png","https://map1{s}.vis.earthdata.nasa.gov/wmts-antarctic/MODIS_Aqua_Brightness_Temp_Band31_Day/default/2014-02-04/EPSG3031_1km/{z}/{y}/{x}.png","https://map1{s}.vis.earthdata.nasa.gov/wmts-antarctic/MODIS_Aqua_Brightness_Temp_Band31_Night/default/2014-02-04/EPSG3031_1km/{z}/{y}/{x}.png"],"layername":["BlueMarble_ShadedRelief_Bathymetry","AMSR2_Sea_Ice_Concentration_25km","AMSR2_Sea_Ice_Brightness_Temp_6km_89H","AMSR2_Sea_Ice_Brightness_Temp_6km_89V","AMSRE_Sea_Ice_Concentration_12km","AMSRE_Snow_Depth_Over_Ice","AMSRE_Sea_Ice_Concentration_25km","AMSRE_Sea_Ice_Brightness_Temp_89H","AMSRE_Sea_Ice_Brightness_Temp_89V","AMSR2_Sea_Ice_Concentration_12km","MODIS_Terra_Sea_Ice","MODIS_Terra_Brightness_Temp_Band31_Day","MODIS_Terra_Brightness_Temp_Band31_Night","MODIS_Aqua_Sea_Ice","MODIS_Aqua_Brightness_Temp_Band31_Day","MODIS_Aqua_Brightness_Temp_Band31_Night"],"overlayLayer":"x","zoom":"0","t_epsg":"EPSG:3031","t_srs":"+proj=stere +lat_0=-90 +lat_ts=-71 +lon_0=0 +k=1 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs","tilesize":512,"color":["#EBEAF7","#E7E8F5","#E4E6F4","#E0E4F3","#DDE2F2","#D9E0F1","#D6DEF0","#D2DCEF","#CFDAEE","#CBD8ED","#C8D6EC","#C4D4EA","#C1D2E9","#BDD1E8","#BACFE7","#B6CDE6","#B3CBE5","#AFC9E4","#ACC7E3","#A8C5E2","#A5C3E1","#A1C1DF","#9EBFDE","#9ABDDD","#97BBDC","#93B9DB","#91B8DA","#90B8D9","#8FB8D8","#8FB8D7","#8EB8D6","#8DB8D6","#8CB8D5","#8BB8D4","#8BB8D3","#8AB8D2","#89B8D1","#88B8D0","#87B8CF","#86B7CE","#86B7CD","#85B7CD","#84B7CC","#83B7CB","#82B7CA","#81B7C9","#81B7C8","#80B7C7","#7FB7C6","#7EB7C5","#7DB7C4","#7DB7C4","#7DB7C2","#7DB7C1","#7DB7C0","#7DB7BF","#7DB7BE","#7DB7BD","#7DB8BC","#7DB8BB","#7DB8BA","#7DB8B9","#7DB8B8","#7DB8B7","#7DB9B6","#7DB9B5","#7DB9B4","#7DB9B3","#7DB9B2","#7DB9B1","#7DB9B0","#7DBAAF","#7DBAAE","#7DBAAD","#7DBAAC","#7DBAAB","#7DBAAA","#7DBAA8","#7DBAA6","#7DBAA4","#7DBAA2","#7DBAA0","#7DBA9D","#7DBA9B","#7DBA99","#7DBA97","#7DBA95","#7DBA92","#7DBA90","#7DBA8E","#7EB98C","#7EB98A","#7EB987","#7EB985","#7EB983","#7EB981","#7EB97F","#7EB97C","#7EB97A","#7EB978","#7EB976","#7EB974","#7FB972","#80B870","#82B86E","#84B86C","#85B86A","#87B768","#89B766","#8BB764","#8CB762","#8EB661","#90B65F","#91B65D","#93B65B","#95B559","#97B557","#98B555","#9AB553","#9CB452","#9EB450","#9FB44E","#A1B44C","#A3B44A","#A4B348","#A6B346","#A8B344","#AAB342","#ABB241","#ADB240","#AFB13F","#B0B13E","#B2B03E","#B4B03D","#B5AF3C","#B7AF3B","#B9AE3A","#BBAE39","#BCAD38","#BEAD38","#C0AC37","#C1AC36","#C3AB35","#C5AB34","#C6AA33","#C8AA32","#CAA932","#CBA931","#CDA830","#CFA82F","#D0A72E","#D2A72D","#D4A62C","#D5A62C","#D6A52C","#D7A42C","#D7A32C","#D8A22D","#D9A12D","#D9A02D","#DA9F2E","#DB9E2E","#DB9D2E","#DC9C2F","#DC9B2F","#DD9A2F","#DE9930","#DE9830","#DF9730","#E09631","#E09631","#E19531","#E19431","#E29332","#E39232","#E39132","#E49033","#E58F33","#E58E33","#E68D33","#E68B33","#E68933","#E68832","#E68632","#E68432","#E68331","#E68131","#E68031","#E67E31","#E67C30","#E67B30","#E67930","#E6772F","#E6762F","#E6742F","#E6722E","#E6712E","#E66F2E","#E66D2D","#E66C2D","#E66A2D","#E6682C","#E6672C","#E6652C","#E6642C","#E5612B","#E45E2B","#E45C2A","#E3592A","#E35629","#E25429","#E25128","#E14E28","#E14C27","#E04927","#E04726","#DF4426","#DF4125","#DE3F25","#DE3C24","#DD3924","#DD3724","#DC3423","#DC3223","#DB2F22","#DB2C22","#DA2A21","#DA2721","#D92420","#D92220","#D6201F","#D01F1E","#CA1D1C","#C41C1B","#BF1B1A","#B91919","#B31817","#AD1716","#A81615","#A21414","#9C1312","#961211","#901010","#8B0F0F","#850E0D","#7F0C0C","#790B0B","#740A0A","#6E0908","#680707","#620606","#5D0505","#570303","#510202","#4B0101","#460000"],"html":"<html> <head> <style> #popup {font-family: Arial, Helvetica, sans-serif;width: 20%;border-collapse: collapse;} #popup td {font-size: 1em;border: 0px solid #85ADFF;padding: 3px 20px 3px 3px;} #popup tr.alt td {color: #000000;background-color: #F0F5FF;} #popup tr.coord td {color: #000000;background-color: #A8E6A8;} div.scrollableContainer {max-height: 200px;max-width: 100%;overflow-y: auto;overflow-x: auto;margin: 0px;background: #D1E0FF;} \u003c/style> \u003c/head> <body> <div class='scrollableContainer'> <table class='popup scrollable'> <table id='popup'>","opacity":0.7,"weight":1,"values":{"hmn00nat":["Chile","Chile","Chile","Chile","France","Italy","United Kingdom","Chile","Chile","Chile","Japan","United Kingdom","United Kingdom","Chile","Ecuador","Australia","Australia","France","France","Italy","Italy","Russia","Russia","USA","USA","Italy","Bulgaria","Argentina","Norway","Norway","United States","United States","United Kingdom","United Kingdom","United Kingdom","Chile and United States","Chile","Italy","Spain","United States","Argentina","USA","United Kingdom","United Kingdom"],"hmn00nam":["Federico Puga (ex Punta Spring or G. Mann)","Rodolfo Marsh","Ram<f3>n Ca<f1>as (or Jorge Boonen)","Bah<ed>a Yankee","Prud'homme","Browning Pass","Fossil Bluff","Antonio Huneeus","Abrazo de Maip<fa>","Collins","S17","Rothera Skiway","Sky Blu","Federico Guesalaga","Refugio Ecuador","Wilkins Runway","Edgeworth-David","D10 skiway","D85 skiway","Mid Point","Sitry Point","Molodezhnaya Airfield","Novolazarevskaya Airfield","Odell Glacier","Siple Dome","Enigma Lake","Camp Academia, Livingston Island","C<e1>mara Base, Half Moon Island, Livingston Island","Borchgrevink's Hut, Cape Adare","Polheim, South Pole","Lower Erebus Hut, Ross Island","Patriot Hills, Ellsworth Mountains","Cape Royds, Ross Island","Discovery Hut, Hut Point Peninsula, Ross Island","Scott's Hut, Ross Island","Shirreff Base, Livingston Island","11 de septiembre","Edmonson Point","Camp Byers, Livingston Island","Union Glacier Camp, Ellsworth Mountains","Camp Livingston, Livingston Island","Marble Point Heliport","South Ice, Edith Ronne Land","Station P, Livingston Island"],"hmn00unl":[null,"AQ-TNM",null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null],"hmn00ltd":["64<b0>17.80'S","62<b0>11.37'S","63<b0>32.263'S","62<b0>32'S","66<b0>41.22'S","74<b0>37.37'S","71<b0>19.76'S","80<b0>08'S","63<b0>23.278'S","62<b0>09.667'S","69<b0>01.58'S","67<b0>32'S","74<b0>51.38'S","67<b0>46.50'S","62<b0>08'S","66<b0>41.45'S","66<b0>15'S","66<b0>40.08'S","70<b0>25.50'S","75<b0>32.44'S","71<b0>39.32'S","67<b0>40.97'S","70<b0>49.52'S","76<b0>39'S","81<b0>39'S","74<b0>42.81'S","62<b0>38'41.9\"S","62<b0>35'41\"S","71<b0>18'S","90<b0>S","77<b0>30'37.6\"S","80<b0>19'0\"S","77<b0>33'S","77<b0>50'45\"S","77<b0>38'0\"S","62<b0>28'13.5\"S","63<b0>36.318'W","74<b0>20'S","62<b0>39'46\"S","82<b0>51'0\"S","62<b0>39'22\"S","77<b0>24.82'S","82<b0>05'S","62<b0>38'57.5\"S"],"hmn00lat":[-64.2967,-62.1895,-63.5377,-62.5333,-66.687,-74.6228,-71.3293,-80.1333,-63.388,-62.1611,-69.0263,-67.5333,-74.8563,-67.775,-62.1333,-66.6908,-66.25,-66.668,-70.425,-75.5407,-71.6553,-67.6828,-70.8253,-76.65,-81.65,-74.7135,-62.645,-62.5947,-71.3,-90,-77.5104,-80.3167,-77.55,-77.8458,-77.6333,-62.4704,-63.6053,-74.3333,-62.6628,-82.85,-62.6561,-77.4137,-82.0833,-62.6493],"hmn00lnd":["61<b0>04'W","58<b0>58.87'W","57<b0>24.257'W","59<b0>47'W","139<b0>54.42'E","163<b0>54.82'E","68<b0>16.02'W","81<b0>16'W","57<b0>34.96'W","58<b0>50.967'W","40<b0>04.37'E","68<b0>11'W","71<b0>34.16'W","68<b0>54'W","58<b0>22'W","111<b0>31.73'E","100<b0>36'E","139<b0>49.18'E","134<b0>08.75'E","145<b0>49.12'E","148<b0>39.15'E","46<b0>08.08'E","11<b0>37.68'E","159<b0>58'E","149<b0>04'W","164<b0>02.49'E","60<b0>10'18.3\"W","59<b0>55'8\"W","170<b0>12'E","0<b0>E","167<b0>8'45.83\"E","81<b0>16'0\"W","166<b0>10'E","166<b0>38'31.6\"W","166<b0>24'0\"E","60<b0>46'15\"W","57<b0>35.528'W","165<b0>07'E","61<b0>6'0\"W","79<b0>45'0\"W","61<b0>0'39\"W","163<b0>40.75'E","30<b0>00'W","60<b0>35'25\"W"],"hmn00lon":[-61.0667,-58.9812,-57.4043,-59.7833,139.907,163.9137,-68.267,-81.2667,-57.5827,-58.8494,40.0728,-68.1833,-71.5693,-68.9,-58.3667,111.5288,100.6,139.8197,134.1458,145.8187,148.6525,46.1347,11.628,159.9667,-149.0667,164.0415,-60.1717,-59.9189,170.2,0,167.1461,-81.2667,166.1667,-166.6421,166.4,-60.7708,-57.5921,165.1167,-61.1,-79.75,-61.0108,163.6792,-30,-60.5903],"hmn00elv":[30,45,10,5,10,170,92,880,400,5,620,250,1372,50,10,740,15,100,2850,2520,1600,225,550,1600,null,170,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null],"hmn00sui":[null,"wheel",null,null,null,"ski","ski",null,null,null,"ski","ski","wheel",null,null,"ski and wheel",null,"ski","ski","ski","ski","wheel and ski","wheel and ski","wheel","ski","ski",null,null,null,null,null,null,null,null,null,null,null,"ski",null,null,null,null,null,null],"hmn00dat":[1972,1969,1997,1952,null,1997,1961,1997,2003,2006,2005,1975,null,1962,1990,null,null,null,null,1998,2000,null,null,null,null,2005,2004,1953,1899,1911,1992,1987,1908,1911,1911,1991,2002,1994,null,2010,null,null,1957,1957],"feature_ty":["Refuge","Camp","Refuge","Refuge","Camp","Refuge","Refuge","Camp","Refuge","Refuge","Camp","Camp","Camp","Refuge","Refuge","Camp","Camp","Camp","Camp","Depot","Depot","Camp","Camp","Camp","Camp","Depot","Camp","Camp","Camp","Camp","Camp","Camp","Camp","Camp","Camp","Camp","Refuge","Camp","Camp","Camp","Camp","Camp","Camp","Camp"],"temporal":["Seasonal","Year-round","Seasonal","Seasonal","Seasonal","Seasonal","Seasonal","Seasonal","Seasonal","Seasonal","Seasonal","Seasonal","Seasonal","Seasonal","Seasonal","Seasonal","Seasonal","Seasonal","Seasonal","Seasonal","Seasonal","Seasonal","Seasonal","Seasonal","Seasonal","Seasonal",null,null,null,null,null,null,null,null,null,null,"Seasonal","Seasonal",null,null,null,"Seasonal",null,null],"capacity":[4,15,10,null,25,2,6,4,8,3,null,null,6,null,4,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,5,null,null,null,null,null,null,null],"notes":[null,null,null,null,null,null,null,null,null,null,null,null,null,null,"Refugio Ecuador (full name \"Refugio Republic del Ecuador\") was previously known as \"Vicente\".",null,null,null,null,null,null,null,null,null,null,null,null,null,null,"Amundsen's South Pole expedition","Monitoring Mt. Erebus","Private camp with Blue ice runway","Nimrod Expedition","Discovery Expedition","Terra Nova Expedition",null,null,null,null,"Private camp with Blue ice runway",null,null,"IGY overwinter","Survey, geology, biology"],"status":["Operational","Operational","Operational","Operational","Operational","Operational","Operational","Operational","Operational","Operational","Operational","Operational","Operational","Operational","Operational","Operational","Operational","Operational","Operational","Operational","Operational","Operational","Operational","Operational","Operational","Operational","Seasonal","Seasonal","Abandoned, ASPA #159","Abandoned","Operational","Seasonal","Abandoned, ASPA #157","Abandoned, ASPA #158","Abandoned, ASPA #155","Seasonal","Operational","Operational","Seasonal","Seasonal","Seasonal","Operational","Abandoned","Abandoned"],"hmn00src":["https://www.comnap.aq/facilities","https://www.comnap.aq/facilities","https://www.comnap.aq/facilities","https://www.comnap.aq/facilities","https://www.comnap.aq/facilities","https://www.comnap.aq/facilities","https://www.comnap.aq/facilities","https://www.comnap.aq/facilities","https://www.comnap.aq/facilities","https://www.comnap.aq/facilities","https://www.comnap.aq/facilities","https://www.comnap.aq/facilities","https://www.comnap.aq/facilities","https://www.comnap.aq/facilities","https://www.comnap.aq/facilities","https://www.comnap.aq/facilities","https://www.comnap.aq/facilities","https://www.comnap.aq/facilities","https://www.comnap.aq/facilities","https://www.comnap.aq/facilities","https://www.comnap.aq/facilities","https://www.comnap.aq/facilities","https://www.comnap.aq/facilities","https://www.comnap.aq/facilities","https://www.comnap.aq/facilities","https://www.comnap.aq/facilities","http://en.wikipedia.org/wiki/List_of_Antarctic_Field_Camps","http://en.wikipedia.org/wiki/List_of_Antarctic_Field_Camps","http://en.wikipedia.org/wiki/List_of_Antarctic_Field_Camps","http://en.wikipedia.org/wiki/List_of_Antarctic_Field_Camps","http://en.wikipedia.org/wiki/List_of_Antarctic_Field_Camps","http://en.wikipedia.org/wiki/List_of_Antarctic_Field_Camps","http://en.wikipedia.org/wiki/List_of_Antarctic_Field_Camps","http://en.wikipedia.org/wiki/List_of_Antarctic_Field_Camps","http://en.wikipedia.org/wiki/List_of_Antarctic_Field_Camps","http://en.wikipedia.org/wiki/List_of_Antarctic_Field_Camps","https://www.comnap.aq/facilities","https://www.comnap.aq/facilities","http://en.wikipedia.org/wiki/List_of_Antarctic_Field_Camps","http://en.wikipedia.org/wiki/List_of_Antarctic_Field_Camps","http://en.wikipedia.org/wiki/List_of_Antarctic_Field_Camps","https://www.comnap.aq/facilities","http://en.wikipedia.org/wiki/List_of_Antarctic_Field_Camps","http://en.wikipedia.org/wiki/List_of_Antarctic_Field_Camps"],"hmn00rev":["2012-01-06","2012-01-06","2012-01-06","2012-01-06","2012-01-06","2012-01-06","2012-01-06","2012-01-06","2012-01-06","2012-01-06","2012-01-06","2012-01-06","2012-01-06","2012-01-06","2012-01-06","2012-01-06","2012-01-06","2012-01-06","2012-01-06","2012-01-06","2012-01-06","2012-01-06","2012-01-06","2012-01-06","2012-01-06","2012-01-06","2012-01-09","2012-01-09","2012-01-09","2012-01-09","2012-01-09","2012-01-09","2012-01-09","2012-01-09","2012-01-09","2012-01-09","2012-01-06","2012-01-06","2012-01-09","2012-01-09","2012-01-09","2012-01-06","2012-01-09","2012-01-09"],"hmn00edt":["darb1","darb1","darb1","darb1","darb1","darb1","darb1","darb1","darb1","darb1","darb1","darb1","darb1","darb1","darb1","darb1","darb1","darb1","darb1","darb1","darb1","darb1","darb1","darb1","darb1","darb1","darb1","darb1","darb1","darb1","darb1","darb1","darb1","darb1","darb1","darb1","darb1","darb1","darb1","darb1","darb1","darb1","darb1","darb1"],"hmn00typ":[24210,24211,24210,24210,24211,24210,24210,24211,24210,24210,24211,24211,24211,24210,24210,24211,24211,24211,24211,24212,24212,24211,24211,24211,24211,24212,24211,24211,24211,24211,24211,24211,24211,24211,24211,24211,24210,24211,24211,24211,24211,24211,24211,24211],"gid":[1,4,5,6,3,10,2,7,9,11,62,61,78,72,73,64,81,79,80,77,85,83,84,86,63,74,114,113,112,121,119,120,117,118,122,123,8,65,115,126,116,82,124,125],"ioc_ccode":["CHI","CHI","CHI","CHI","FRA","ITA","GBR","CHI","CHI","CHI","JPN","GBR","GBR","CHI","ECU","AUS","AUS","FRA","FRA","ITA","ITA","RUS","RUS","USA","USA","ITA","BUL","ARG","NOR","NOR","USA","USA","GBR","GBR","GBR","CHI","CHI","ITA","ESP","USA","ARG","USA","GBR","GBR"]},"cex":6,"internalList":true},"evals":[],"jsHooks":[]}</script></p>
+<p>To avoid some strange side effects you’ll find further examples on seperates pages:</p>
+</div>
+<div id="arctic-web-maps-as-provided-by-arcticconnect-ac" class="section level2">
+<h2>Arctic Web Maps as provided by ArcticConnect (AC)</h2>
+<ul>
+<li><a href="http://gisma.github.io/projView/projView1_0_9_AC.html">Arctic Connect</a></li>
+</ul>
+</div>
+<div id="the-conservation-of-arctic-fauna-and-flora-caff" class="section level2">
+<h2>The Conservation of Arctic Fauna and Flora (CAFF)</h2>
+<ul>
+<li><a href="http://gisma.github.io/projView/projView1_0_9_CAFF.html">CAFF</a></li>
+</ul>
+<hr />
+</div>
+</div>
+<div id="final-remarks" class="section level1">
+<h1>Final remarks</h1>
+<p>There are still more limitations than solutions. Actually the process of generating the correct map.types lists is more ore less cumbersome. On the other hand in the end there is always some manual work due to non strict service declarations. If somebody likes the function it could be worthwhile to automated this process.</p>
+<p>In future releases I would like to</p>
+<ul>
+<li>provide some additional functions for often used datasets</li>
+<li>integrate a fully working localTile functionality for serving local raster data</li>
+<li>…</li>
+</ul>
+<p>If you have any feedback, please don’t hesitate to contact <a href="http://www.uni-marburg.de/fb19/personal/mitarbeiter/reudenbachc/index.html">me</a>.</p>
+<p>Bug reports should be filed at <a href="https://github.com/environmentalinformatics-marburg/mapview/issues" target="_blank">https://github.com/environmentalinformatics-marburg/mapview/issues</a></p>
+<p>Cheers</p>
+<p>Chris</p>
+</div>
+
+
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+$(document).ready(function () {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+});
+
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
